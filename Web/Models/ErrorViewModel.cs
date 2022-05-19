@@ -1,4 +1,4 @@
-namespace Web.Models
+namespace My.Demo.FileUpload.Web
 {
     public class ErrorViewModel
     {
