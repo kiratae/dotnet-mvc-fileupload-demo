@@ -1,7 +1,13 @@
+using My.Demo.FileUpload.Entity.Sqlite;
+using My.Demo.FileUpload.Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// DI
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 var app = builder.Build();
 
