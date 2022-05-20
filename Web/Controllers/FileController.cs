@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using My.Demo.FileUpload.Model;
 
 namespace My.Demo.FileUpload.Web
@@ -10,11 +11,36 @@ namespace My.Demo.FileUpload.Web
         public static readonly string Name = "File";
         public static readonly string ActionDetail = "Detail";
         public static readonly string ActionUpload = "Upload";
+        public const string StorageLocation = "C:\\my\\storage\\demo";
 
         public FileController(ILogger<FileController> logger, IFileService service)
         {
             _logger = logger;
             _service = service;
+        }
+
+        [AllowAnonymous]
+        public IActionResult Detail(int? id)
+        {
+            const string func = "Detail";
+            try
+            {
+                if (!id.HasValue)
+                    return NotFound();
+                Model.File file = _service.GetData(id.Value);
+                if (file == null)
+                    return NotFound();
+
+                string fileName = Path.Combine(StorageLocation, file.FileGuid);
+                if (!System.IO.File.Exists(fileName))
+                    return NotFound("File not found.");
+                return PhysicalFile(fileName, file.MimeType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{0}: Exception caught with id {1}.", func, id);
+                return Error();
+            }
         }
 
         [HttpPost]
@@ -31,8 +57,8 @@ namespace My.Demo.FileUpload.Web
                 {
                     string fileGuid = Guid.NewGuid().ToString();
                     // Get some config StorageLocation
-                    string storageLocation = "C:\\my\\storage\\demo";
-                    string fileName = Path.Combine(storageLocation, fileGuid);
+                    
+                    string fileName = Path.Combine(StorageLocation, fileGuid);
                     using (FileStream output = System.IO.File.Create(fileName))
                         await postedFile.CopyToAsync(output);
                     FileModel fileModel = new()
