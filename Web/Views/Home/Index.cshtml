@@ -5,4 +5,21 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <hr />
+    <h1>File upload</h1>
+    <input id="fileupload" type="file" name="files[]" multiple>
 </div>
+
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#fileupload').fileupload(
+        'option',
+        {
+            url: '@Url.Action(FileController.ActionUpload, FileController.Name)',
+            type: 'post',
+            sequentialUploads: true
+        });
+    });
+</script>
+}
