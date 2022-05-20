@@ -55,6 +55,12 @@ namespace My.Demo.FileUpload.Web
 
                 foreach (IFormFile postedFile in files)
                 {
+                    // check file size
+                    if(postedFile.Length > 5 * 1024 * 1024)
+                    {
+                        return Json(new AjaxResultModel(AjaxResultModel.StatusCodeError, "File size exceed 5 MB."));
+                    }
+
                     string fileGuid = Guid.NewGuid().ToString();
                     string fileName = Path.Combine(StorageLocation, fileGuid);
                     using (FileStream output = System.IO.File.Create(fileName))
