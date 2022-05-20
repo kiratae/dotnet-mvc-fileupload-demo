@@ -14,12 +14,15 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('#fileupload').fileupload(
-        'option',
         {
             url: '@Url.Action(FileController.ActionUpload, FileController.Name)',
-            type: 'post',
-            sequentialUploads: true
-        });
+            type: 'post'
+        })
+        .on('fileuploadadd', function (e, data) { /*console.log('fileuploadadd', data);*/ })
+        .on('fileuploadsubmit', function (e, data) { /*console.log('fileuploadsubmit', data);*/ })
+        .on('fileuploadsend', function (e, data) { /*console.log('fileuploadsend', data);*/ })
+        .on('fileuploaddone', function (e, data) { console.log('fileuploaddone', data.result); })
+        .on('fileuploadfail', function (e, data) {/* ... */})
     });
 </script>
 }

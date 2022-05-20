@@ -56,8 +56,6 @@ namespace My.Demo.FileUpload.Web
                 foreach (IFormFile postedFile in files)
                 {
                     string fileGuid = Guid.NewGuid().ToString();
-                    // Get some config StorageLocation
-                    
                     string fileName = Path.Combine(StorageLocation, fileGuid);
                     using (FileStream output = System.IO.File.Create(fileName))
                         await postedFile.CopyToAsync(output);
