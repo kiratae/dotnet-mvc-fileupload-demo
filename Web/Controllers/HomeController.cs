@@ -22,6 +22,12 @@ namespace My.Demo.FileUpload.Web
             return View();
         }
 
+        [HttpPost]
+        public IActionResult EditBanner(BannerModel model)
+        {
+            return Ok(model);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

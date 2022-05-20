@@ -66,7 +66,55 @@ namespace My.Demo.FileUpload.Entity.Sqlite
 
         public File GetData(int fileId)
         {
-            throw new NotImplementedException();
+            const string func = "GetData";
+            try
+            {
+                using var connection = new SqliteConnection(EntityConfigSection.ConnectionString);
+                connection.Open();
+
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    SELECT FileId, FileGuid, FileName, MimeType, FileSize, Description, CreateDate, CreateUserId
+                    FROM File
+                    WHERE FileId = @fileId
+                ";
+                command.Parameters.AddWithValue("@fileId", fileId);
+                command.Prepare();
+
+                File file = null;
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    int? _fileId = reader.GetFieldValue<int?>(0);
+                    string fileGuid = reader.GetFieldValue<string>(1);
+                    string fileName = reader.GetFieldValue<string>(2);
+                    string mimeType = reader.GetFieldValue<string>(3);
+                    int fileSize = reader.GetFieldValue<int>(4);
+                    string description = reader.IsDBNull(5) ? null : reader.GetFieldValue<string>(5);
+                    DateTime createDate = reader.GetFieldValue<DateTime>(6);
+                    int? createUserId = reader.IsDBNull(7) ? null : reader.GetFieldValue<int?>(7);
+
+                    file = new File()
+                    {
+                        FileId = _fileId,
+                        FileGuid = fileGuid,
+                        FileName = fileName,
+                        MimeType = mimeType,
+                        FileSize = fileSize,
+                        Description = description,
+                        CreateDate = createDate,
+                        CreateUserId = createUserId
+                    };
+                }
+
+                return file;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{0}: Exception caught.", func);
+                throw;
+            }
         }
 
         public File SaveData(File file)

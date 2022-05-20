@@ -6,20 +6,56 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <hr />
-    <h1>File upload</h1>
-    <input id="fileupload" type="file" name="files[]" multiple>
+    <h1>Banner</h1></>
+    <form method="post" action="Home/EditBanner">
+        Title: <input type="text" name="Title" />
+        <br/>
+        Baner Image: <input id="fileupload" type="file" name="files[]" accept=".jpg,.png">
+        <div id="img-preview" style="border: solid 1px #ccc;">
+
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    @*<input id="fileupload" type="file" name="files[]" accept=".jpg,.png" multiple>
+    <ul id="file-list">
+
+    </ul>*@
 </div>
 
 @section Scripts {
 <script type="text/javascript">
+    function displayFiles(files){
+        for(var i = 0; i < files.length; i++){
+            var f = files[i];
+            $("#file-list").append("<li>file name: " + f.fileName + ", create date:" + f.createDateText + "</li>")
+        }
+    }
+
+    function displayFile(files){
+        for(var i = 0; i < files.length; i++){
+            var f = files[i];
+            $("#img-preview").html('<img src="@Url.Action(FileController.ActionDetail, FileController.Name)/' + f.fileId + '">')
+            $("#img-preview").append('<input type="hidden" name="FileId" value="' + f.fileId + '"/>');
+        }
+    }
+
     $(document).ready(function(){
         $('#fileupload').fileupload(
-        'option',
         {
             url: '@Url.Action(FileController.ActionUpload, FileController.Name)',
             type: 'post',
             sequentialUploads: true
-        });
+        })
+        .on('fileuploadadd', function (e, data) { /*console.log('fileuploadadd', data);*/ })
+        .on('fileuploadsubmit', function (e, data) { /*console.log('fileuploadsubmit', data);*/ })
+        .on('fileuploadsend', function (e, data) { /*console.log('fileuploadsend', data);*/ })
+        .on('fileuploaddone', function (e, data) { 
+            console.log('fileuploaddone', data.result);
+            displayFile(data.result.files);
+        })
+        .on('fileuploadfail', function (e, data) {/* ... */})
     });
 </script>
 }
