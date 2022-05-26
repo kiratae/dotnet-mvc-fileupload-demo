@@ -59,7 +59,7 @@ namespace My.Demo.FileUpload.Entity.Sqlite
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{0}: Exception caught.", func);
+                _logger.LogError(ex, $"{func}: Exception caught.");
                 throw;
             }
         }
@@ -112,7 +112,7 @@ namespace My.Demo.FileUpload.Entity.Sqlite
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{0}: Exception caught.", func);
+                _logger.LogError(ex, $"{func}: Exception caught with FileId {fileId}.");
                 throw;
             }
         }
@@ -154,21 +154,61 @@ namespace My.Demo.FileUpload.Entity.Sqlite
                 }
                 else
                 {
+                    var command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        UPDATE File SET FileGuid = @fileGuid,
+                            FileName = @fileName,
+                            MimeType = @mimeType,
+                            FileSize = @fileSize,
+                            Description = @description,
+                            IsTemp = @isTemp
+                        WHERE FileId = @fileId;
+                    ";
+                    command.Parameters.AddWithValue("@fileGuid", file.FileGuid);
+                    command.Parameters.AddWithValue("@fileName", file.FileName);
+                    command.Parameters.AddWithValue("@mimeType", file.MimeType);
+                    command.Parameters.AddWithValue("@fileSize", file.FileSize);
+                    command.Parameters.AddWithValue("@description", !string.IsNullOrEmpty(file.Description) ? file.Description : DBNull.Value);
+                    command.Parameters.AddWithValue("@isTemp", file.IsTemp);
+                    command.Parameters.AddWithValue("@fileId", file.FileId.Value);
+                    command.Prepare();
 
+                    command.ExecuteNonQuery();
                 }
 
                 return file;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{0}: Exception caught.", func);
+                _logger.LogError(ex, $"{func}: Exception caught.");
                 throw;
             }
         }
 
         public bool DeletData(int fileId)
         {
-            throw new NotImplementedException();
+            const string func = "DeletData";
+            try
+            {
+                using var connection = new SqliteConnection(EntityConfigSection.ConnectionString);
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                @"
+                    DELETE FROM File WHERE FileId = @fileId;
+                ";
+                command.Parameters.AddWithValue("@fileId", fileId);
+                command.Prepare();
+
+                command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{func}: Exception caught with FileId {fileId}.");
+                throw;
+            }
         }
     }
 }

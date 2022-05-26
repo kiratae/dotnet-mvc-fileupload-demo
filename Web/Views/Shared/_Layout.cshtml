@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] - Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -32,6 +31,12 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <div class="we-biz-error-area">
+                <div class="alert alert-danger mb-3" role="alert" style="margin-bottom:0px; display:none;">
+                    <div class="alert-icon"><i class="fa fa-exclamation-circle"></i></div>
+                    <div class="alert-text"></div>
+                </div>
+            </div>
             @RenderBody()
         </main>
     </div>
@@ -45,6 +50,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/blueimp-file-upload/js/vendor/jquery.ui.widget.min.js"></script>
     <script src="~/lib/blueimp-file-upload/js/jquery.fileupload.min.js"></script>
+    <script src="~/js/we-ajax.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

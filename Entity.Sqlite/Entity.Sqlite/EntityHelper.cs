@@ -10,6 +10,12 @@ namespace My.Demo.FileUpload.Entity.Sqlite
             connection.Open();
 
             var command = connection.CreateCommand();
+            CreateFileTable(command);
+            CreateBannerTable(command);
+        }
+
+        protected static void CreateFileTable(SqliteCommand command)
+        {
             command.CommandText = "DROP TABLE IF EXISTS File";
             command.ExecuteNonQuery();
 
@@ -26,7 +32,25 @@ namespace My.Demo.FileUpload.Entity.Sqlite
             )";
             command.ExecuteNonQuery();
 
-            Console.WriteLine("Table File created");
+            Console.WriteLine("Table 'File' was created.");
+        }
+
+        protected static void CreateBannerTable(SqliteCommand command)
+        {
+            command.CommandText = "DROP TABLE IF EXISTS Banner";
+            command.ExecuteNonQuery();
+
+            command.CommandText = @"CREATE TABLE Banner (
+                BannerId INTEGER PRIMARY KEY,
+                Title NVARCHAR(200) NOT NULL,
+                FileId INT NOT NULL,
+                CreateDate DATETIME NOT NULL,
+                CreateUserId INT,
+                FOREIGN KEY(FileId) REFERENCES File(FileId)
+            )";
+            command.ExecuteNonQuery();
+
+            Console.WriteLine("Table 'Banner' was created.");
         }
     }
 }

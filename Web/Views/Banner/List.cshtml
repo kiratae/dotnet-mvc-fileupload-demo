@@ -1,37 +1,45 @@
-﻿@{
+﻿@using cntr = My.Demo.FileUpload.Web.BannerController
+@model ListBannerModel
+
+@{
     ViewData["Title"] = "Banners";
 }
 
 <div class="card">
-    <div class="card-header">Banners</div>
+    <div class="card-header">
+        <div class="row justify-content-between">
+            <div class="col-auto">
+                <h4>Banners</h4>
+            </div>
+            <div class="col-auto">
+                <a href="@Url.Action(cntr.ActionEdit, cntr.Name)" class="btn btn-secondary">Add</a>
+            </div>
+        </div>
+    </div>
     <div class="card-body">
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col" width="10%" class="text-center">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col" width="15%" class="text-center">Tools</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>twitter</td>
-                </tr>
+                @{
+                    int index = 1;
+                }
+                @foreach (BannerModel item in Model.Banners)
+                {
+                    string url = Url.Action(cntr.ActionEdit, cntr.Name, new { id = item.BannerId.Value });
+                    <tr>
+                        <th scope="row" class="text-center">@(index++)</th>
+                        <td>@item.Title</td>
+                        <td class="text-center">
+                            <a href="@url">Edit</a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
