@@ -32,10 +32,6 @@ var weAjax = function (option) {
     option.returnUrl = typeof (option.returnUrl) === 'undefined' ? null : option.returnUrl;
     if (option.bizType == 'edit' && !option.formSelector)
         console.error('weAjax: "formSelector" is missing!');
-    if (option.isHasTab && !option.tabHeadSelector)
-        console.error('weAjax: "tabHeadSelector" is missing!');
-    if (option.isHasTab && !option.tabContentSelector)
-        console.error('weAjax: "tabContentSelector" is missing!');
 
     var successFunc = typeof (option.successOverride) !== 'undefined' ?
         option.successOverride :
@@ -85,6 +81,7 @@ var weAjax = function (option) {
             }
             else if (res.statusCode == "1") { // 📌 StatusCodeError
 
+                $(option.submitBtnSelector).removeAttr('disabled');
                 // #region StatusCodeError
                 if ((!res.errors || res.errors.length == 0) && (!res.errorMap || Object.entries(res.errorMap).length == 0)) {
                     var msg = res.message || "Save sucess";

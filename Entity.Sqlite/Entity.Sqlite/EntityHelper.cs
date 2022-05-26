@@ -48,7 +48,7 @@ namespace My.Demo.FileUpload.Entity.Sqlite
                 FileId INT NOT NULL,
                 CreateDate DATETIME NOT NULL,
                 CreateUserId INT,
-                ModifyDate DATETIME NOT NULL,
+                ModifyDate DATETIME,
                 ModifyUserId INT,
                 FOREIGN KEY(FileId) REFERENCES File(FileId)
             )";

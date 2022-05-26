@@ -135,12 +135,13 @@ namespace My.Demo.FileUpload.Entity.Sqlite
                     command.CommandText =
                     @"
                         UPDATE Banner SET Title = @title,
-                            FileId = @fileName,
+                            FileId = @fileId,
                             ModifyDate = DATE('now')
                         WHERE BannerId = @bannerId;
                     ";
                     command.Parameters.AddWithValue("@title", banner.Title);
                     command.Parameters.AddWithValue("@fileId", banner.FileId);
+                    command.Parameters.AddWithValue("@bannerId", banner.BannerId.Value);
                     command.Prepare();
 
                     command.ExecuteNonQuery();
