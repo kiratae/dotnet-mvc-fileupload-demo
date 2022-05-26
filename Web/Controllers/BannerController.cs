@@ -10,6 +10,7 @@ namespace My.Demo.FileUpload.Web
         public const string Name = "Banner";
         public const string ActionList = "List";
         public const string ActionEdit = "Edit";
+        public const string ActionDelete = "Delete";
 
         public BannerController(ILogger<BannerController> logger, IBannerService service)
         {
@@ -79,6 +80,30 @@ namespace My.Demo.FileUpload.Web
                 }
 
                 return Json(new AjaxResultModel(AjaxResultModel.StatusCodeError, ModelState));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{func}: Exception caught.", func);
+                return Error();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int? id)
+        {
+            const string func = "Delete";
+            try
+            {
+                if (!id.HasValue)
+                {
+                    return Json(new AjaxResultModel(AjaxResultModel.StatusCodeError, "Fail"));
+                }
+
+                if (id.HasValue)
+                {
+                    _service.DeletData(id.Value);
+                }
+                return Json(new AjaxResultModel(AjaxResultModel.StatusCodeSuccess));
             }
             catch (Exception ex)
             {

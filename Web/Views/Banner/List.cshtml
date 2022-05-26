@@ -31,12 +31,13 @@
                 }
                 @foreach (BannerModel item in Model.Banners)
                 {
-                    string url = Url.Action(cntr.ActionEdit, cntr.Name, new { id = item.BannerId.Value });
-                    <tr>
+                    string editUrl = Url.Action(cntr.ActionEdit, cntr.Name, new { id = item.BannerId.Value });
+                    <tr data-x-id="@item.BannerId.Value" data-x-name="@item.Title">
                         <th scope="row" class="text-center">@(index++)</th>
                         <td>@item.Title</td>
                         <td class="text-center">
-                            <a href="@url">Edit</a>
+                            <a href="@editUrl">Edit</a>
+                            <a href="javascript:void(0)" class="text-danger do-delete">Delete</a>
                         </td>
                     </tr>
                 }
@@ -44,3 +45,30 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+
+            $('.do-delete').click(function(e) {
+                e.preventDefault();
+
+                var id = $(this).data("x-id");
+                if (!id) id = $(this).closest('tr').data("x-id");
+                var name = $(this).data("x-name");
+                if (!name) name = $(this).closest('tr').data("x-name");
+
+                if (confirm('Delete banner "' + name + '" ?') == true) {
+                    weAjax({
+                        url: "@Html.Raw(Url.Action(cntr.ActionDelete, cntr.Name))",
+                        data: { id: id },
+                        bizType: 'list',
+                        returnUrl: "@Html.Raw(Url.Action(cntr.ActionList, cntr.Name))",
+                        isReload: true
+                    });
+                }
+            });
+
+        });
+    </script>
+}

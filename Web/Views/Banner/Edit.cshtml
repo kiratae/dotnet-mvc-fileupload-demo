@@ -17,14 +17,20 @@
                 <label for="Title" class="form-label">Title</label>
                 @Html.TextBoxFor(x => x.Title, new { @class = "form-control"  })
             </div>
-            <div class="mb-3">
+            <div id="file-upload-section">
                 <label for="fileupload" class="form-label">Image</label>
-                <input id="fileupload" class="form-control need-validate" data-name="FileId" type="file" name="files[]" accept=".jpg,.png">
+                @if (!Model.FileId.HasValue)
+                {
+                    <input id="fileupload" class="form-control need-validate" data-name="FileId" type="file" name="files[]" accept=".jpg,.png">
+                }
             </div>
-            <div id="img-preview" class="border rounded w-100" style="@(Model.FileId.HasValue ? "" : "display: none")">
+            <div id="img-preview">
                 @if (Model.FileId.HasValue)
                 {
-                    <img class="img-fluid" src="@Url.Action(FileController.ActionDetail, FileController.Name, new { id = Model.FileId.Value })">
+                    <img class="img-thumbnail" style="height: 350px" src="@Url.Action(FileController.ActionDetail, FileController.Name, new { id = Model.FileId.Value })">
+                    <input type="hidden" name="FileId" value="@Model.FileId.Value"/>
+                    <br />
+                    <a href="javascript:void(0)" class="mt-2" id="remove-file">Remove Image</a>
                 }
             </div>
         </div>
@@ -51,12 +57,13 @@
                     data: $(form).serialize(),
                     formSelector: 'form.wa-form-edit',
                     submitBtnSelector: '#footer #btn-save',
-                    isReload: false,
+                    isReload: true,
                     returnUrl: '@Html.Raw(returnUrl)'
                 });
             });
 
-            $('#footer #btn-cancel').click(function() {
+            $('#footer #btn-cancel').click(function(e) {
+                e.preventDefault();
                 window.location.href = '@Html.Raw(returnUrl)';
             });
 
@@ -70,15 +77,36 @@
                     console.log('fileuploaddone', data.result);
                     onFileUploaded(data.result.files);
                 });
+
+            $(document).on('click', '#remove-file', function(e) {
+                e.preventDefault();
+                $("#img-preview").empty();
+
+                var input = '<input id="fileupload" class="form-control need-validate" data-name="FileId" type="file" name="files[]" accept=".jpg,.png">';
+                $('#file-upload-section').append(input);
+
+                $('#fileupload').fileupload(
+                    {
+                        url: '@Url.Action(FileController.ActionUpload, FileController.Name)',
+                        type: 'post',
+                        sequentialUploads: true
+                    })
+                    .on('fileuploaddone', function(e, data) {
+                        console.log('fileuploaddone', data.result);
+                        onFileUploaded(data.result.files);
+                    });
+            })
         });
 
         function onFileUploaded(files) {
             for (var i = 0; i < files.length; i++) {
                 var f = files[i];
-                $("#img-preview").html('<img class="img-fluid" src="@Url.Action(FileController.ActionDetail, FileController.Name)/' + f.fileId + '">')
+                $("#img-preview").html('<img class="img-thumbnail" style="height: 350px" src="@Url.Action(FileController.ActionDetail, FileController.Name)/' + f.fileId + '">')
                 $("#img-preview").append('<input type="hidden" name="FileId" value="' + f.fileId + '"/>');
+                $("#img-preview").append('<br/><a href="javascript:void(0)" class="mt-2" id="remove-file">Remove Image</a>');
             }
 
+            $('#fileupload').remove();
             $('#img-preview').show();
         }
     </script>

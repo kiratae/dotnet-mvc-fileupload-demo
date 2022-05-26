@@ -16,6 +16,8 @@ namespace My.Demo.FileUpload.Entity.Sqlite
 
         protected static void CreateFileTable(SqliteCommand command)
         {
+            command.CommandText = "DELETE FROM Banner";
+            command.ExecuteNonQuery();
             command.CommandText = "DROP TABLE IF EXISTS File";
             command.ExecuteNonQuery();
 
@@ -46,6 +48,8 @@ namespace My.Demo.FileUpload.Entity.Sqlite
                 FileId INT NOT NULL,
                 CreateDate DATETIME NOT NULL,
                 CreateUserId INT,
+                ModifyDate DATETIME NOT NULL,
+                ModifyUserId INT,
                 FOREIGN KEY(FileId) REFERENCES File(FileId)
             )";
             command.ExecuteNonQuery();

@@ -66,7 +66,7 @@ function weShowBizErrors(errors) {
     $(selector).css('display', 'none');
     if (errors && errors.length > 0) {
         $(selector).closest('.wrapper').addClass('has-error');
-        var msg = typeof errors === 'string' ? errors : GetErrorMessage(errors);
+        var msg = typeof errors === 'string' ? errors : getErrorMessage(errors);
         $(selector + ' .alert-text').html(msg);
         $(selector).css('display', '');
     }
