@@ -5,9 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 // DI
+// - Service
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IBannerService, BannerService>();
+
+// - Repo
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IBannerRepository, BannerRepository>();
 
 var app = builder.Build();
 

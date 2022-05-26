@@ -1,0 +1,85 @@
+﻿@using cntr = My.Demo.FileUpload.Web.BannerController
+@model EditBannerModel
+
+@{
+    ViewData["Title"] = "Edit Banner";
+    string returnUrl = Url.Action(cntr.ActionList, cntr.Name);
+}
+
+
+@using (Html.BeginForm(cntr.ActionEdit, cntr.Name, FormMethod.Post, new { @class = "wa-form-edit" }))
+{
+    @Html.HiddenFor(x => x.BannerId)
+    <div class="card">
+        <div class="card-header"><h4>Edit Banner</h4></div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="Title" class="form-label">Title</label>
+                @Html.TextBoxFor(x => x.Title, new { @class = "form-control"  })
+            </div>
+            <div class="mb-3">
+                <label for="fileupload" class="form-label">Image</label>
+                <input id="fileupload" class="form-control need-validate" data-name="FileId" type="file" name="files[]" accept=".jpg,.png">
+            </div>
+            <div id="img-preview" class="border rounded w-100" style="@(Model.FileId.HasValue ? "" : "display: none")">
+                @if (Model.FileId.HasValue)
+                {
+                    <img class="img-fluid" src="@Url.Action(FileController.ActionDetail, FileController.Name, new { id = Model.FileId.Value })">
+                }
+            </div>
+        </div>
+        <div id="footer" class="card-footer text-center">
+            <button class="btn btn-default mx-2" id="btn-cancel" type="reset">Cancel</button>
+            <button class="btn btn-primary mx-2" id="btn-save" type="submit">Save</button>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#footer #btn-save').click(function() {
+                $('form.wa-form-edit').submit();
+            });
+
+            $("form.wa-form-edit").submit(function(event) {
+                event.preventDefault();
+                var form = $(this);
+                weAjax({
+                    url: $(form).attr("action"),
+                    type: $(form).attr("method"),
+                    data: $(form).serialize(),
+                    formSelector: 'form.wa-form-edit',
+                    submitBtnSelector: '#footer #btn-save',
+                    isReload: false,
+                    returnUrl: '@Html.Raw(returnUrl)'
+                });
+            });
+
+            $('#footer #btn-cancel').click(function() {
+                window.location.href = '@Html.Raw(returnUrl)';
+            });
+
+            $('#fileupload').fileupload(
+                {
+                    url: '@Url.Action(FileController.ActionUpload, FileController.Name)',
+                    type: 'post',
+                    sequentialUploads: true
+                })
+                .on('fileuploaddone', function(e, data) {
+                    console.log('fileuploaddone', data.result);
+                    onFileUploaded(data.result.files);
+                });
+        });
+
+        function onFileUploaded(files) {
+            for (var i = 0; i < files.length; i++) {
+                var f = files[i];
+                $("#img-preview").html('<img class="img-fluid" src="@Url.Action(FileController.ActionDetail, FileController.Name)/' + f.fileId + '">')
+                $("#img-preview").append('<input type="hidden" name="FileId" value="' + f.fileId + '"/>');
+            }
+
+            $('#img-preview').show();
+        }
+    </script>
+}
